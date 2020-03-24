@@ -85,13 +85,11 @@ func cbMessageHandler(message *mqttTypes.Publish) {
 			log.Printf("[ERROR] cbMessageHandler - Failed to create AMQP sender: %s", err.Error())
 			return
 		}
-		ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 		err = sender.Send(ctx, amqp.NewMessage(message.Payload))
 		if err != nil {
 			log.Printf("[ERROR] cbMessageHandler - Failed to send AMQP message: %s", err.Error())
 		}
-		sender.Close(ctx)
-		cancel()
+		log.Printf("[DEBUG] cbMessageHandler - AMQP Message Succesfully sent on queue %s!\n", topicToUse)
 	} else {
 		log.Printf("[ERROR] cbMessageHandler - Unexpected topic for message from MQTT Broker: %s\n", message.Topic.Whole)
 	}
